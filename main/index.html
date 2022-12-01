@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Arbeitszeit Dokumentation</title>
+        <script src="../javascript/login.js" defer></script>
+        <link rel="stylesheet" href="../css/stylesheet.css">
+    </head>
+    <body>
+        <header class='header_container'>
+            <div class='header_container'>
+                <figure> <img src='../imageFiles/cropped-orcas-logo-orange.png' alt='Orcas Logo' class='header_symbol'> </figure>
+                <h1 class='header_text'>Orcas Arbeitszeit Dokumentation</h1>
+            </div>    
+        </header>
+        <main class='main_box'>
+            <div id="loginBlock" >
+                <p class='sub_headline'>Bitte Zugangsdaten eingeben.<p>
+                <form method="post" action="userlogin.php" id="loginForm">
+                    <label for="username"><b> Mitarbeiter: </b></label>
+                    <input name="username" id="username" type="text">
+                    <label for="password"><b> Passwort: </b></label>
+                    <input name="password" id="password" type="password">
+                    <button>Einloggen</button>
+                </form>
+                <p id="fail"></p>
+            </div>    
+        </main>
+       <div id="footer" class='main_box'></div>
+    </body>
+</html>
