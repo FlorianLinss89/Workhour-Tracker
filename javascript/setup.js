@@ -204,6 +204,7 @@ function weekData(dateCheck) {
 
 function dayData(dateCheck) {
     var insert = [];
+    var curentDate = new Date(dateCheck[2], dateCheck[1], dateCheck[0]);
     var dateHelp = "";
     var endCheck;
 
@@ -212,7 +213,7 @@ function dayData(dateCheck) {
 
             var lastDay = 0;
 
-            if((dateHelp.getUTCDay()||7) < 2) { // check for Mondays
+            if((curentDate.getUTCDay()||7) < 2) { // check for Mondays
                 lastDay = (dateCheck[0]-3);
             }
             else lastDay = (dateCheck[0]-1);
@@ -233,8 +234,6 @@ function dayData(dateCheck) {
                     }
                 }
             }
-
-            dateHelp = new Date(dateCheck[2], dateCheck[1], 0); // create new Date to get the number of days of the current month
         }
 
         else if(i==1) {
@@ -247,11 +246,12 @@ function dayData(dateCheck) {
 
         else {
             var nextDay = 0;
-            if((dateHelp.getUTCDay()||7) > 4) { // check for Fridays
-                lastDay = (dateCheck[0]+3);
+            if((curentDate.getUTCDay()||7) > 4) { // check for Fridays
+                nextDay = (dateCheck[0]+3);
             }
+            else nextDay = (dateCheck[0]+1);
 
-            else lastDay = (dateCheck[0]+1);
+            dateHelp = new Date(dateCheck[2], dateCheck[1], 0); // create new Date to get the number of days of the current month 
             endCheck = dateHelp.getDate() - nextDay;
 
             if(endCheck <1) { // checking for end of Month
@@ -449,6 +449,17 @@ function setWeekDisplay(dateArray) {
 }
 
 function setDayDisplay(dateArray) {
+    
+    var dayHelp = parseInt(dateArray[0]);
+    var monthHelp = parseInt(dateArray[1]);
+    
+    if(dayHelp<10) {
+        dateArray[0] = "0" + dayHelp;
+    }
+    if(monthHelp<10) {
+        dateArray[1] = "0" + monthHelp;
+    }
+    
     currentDay = dateArray[0] + "." + dateArray[1] + "." + dateArray[2];
     var displayDay = "Arbeitszeiten " + dateArray[0] + " " + dateArray[1] + " " + dateArray[2];
     $('#table_caption').html(displayDay);
