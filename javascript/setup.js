@@ -314,13 +314,22 @@ function fillBody(username) {
                     "<button type='button' id='next_time_button'>&#8594</button>\n";
     $('#month_swapper').html(swapper);
 
-    var buttonContainer =   "<button type='button' id='start_day_button'>Tag Beginnen</button>\n" +
-                            "<button type='button' id='switch_button'>Project Wechseln</button>\n" +
-                            "<button type='button' id='end_day_button'>Tag Beenden</button>\n" +
-                            "<button type='button' id='save_changes_button'>Änderungen Speichern</button>\n" +
-                            "<button type='button' id='delete_row_button'>Zeile Löschen</button>\n";
+    setupSelectionContainer();
+}
+
+function setupSelectionContainer() {
+
+    $('#close_switch_container').html("");
+    $('#selection_header').html("");
+    $('#selection_container').html("");
+
+    var buttonContainer =   "<button type='button' id='show_selection_button'>Tabelle bearbeiten</button>\n";
     $('#button_container').html(buttonContainer);
-    openSelection();
+
+    $('#show_selection_button').click(function(event) {
+        event.preventDefault();
+        showSelectionButtons();
+    });
 }
 
 function fillFoot() {
@@ -449,7 +458,7 @@ function setWeekDisplay(dateArray) {
 }
 
 function setDayDisplay(dateArray) {
-    
+
     var dayHelp = parseInt(dateArray[0]);
     var monthHelp = parseInt(dateArray[1]);
     

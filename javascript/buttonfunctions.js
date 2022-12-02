@@ -7,6 +7,21 @@ var columnNames = ["index", "user", "entry", "date", "start", "end", "project", 
 var selectionTitle;
 var isEnd = false;
 
+function showSelectionButtons() {
+
+    var buttonContainer =   "<button type='button' id='start_day_button'>Tag Beginnen</button>\n" +
+                            "<button type='button' id='switch_button'>Project Wechseln</button>\n" +
+                            "<button type='button' id='end_day_button'>Tag Beenden</button>\n" +
+                            "<button type='button' id='save_changes_button'>Änderungen Speichern</button>\n" +
+                            "<button type='button' id='delete_row_button'>Zeile Löschen</button>\n";
+    $('#button_container').html(buttonContainer);
+
+    var closeButton = "<button type='button' id='close_selection_button'>Bearbeitung beenden</button>\n";
+    $('#close_switch_container').html(closeButton);
+
+    openSelection();
+}
+
 function openSelection() {
 
     $('#switch_button').click(function (event) {
@@ -44,6 +59,11 @@ function openSelection() {
         event.preventDefault();
         showNextDate($('#year_selection').val());
     });
+
+    $('#close_selection_button').click(function(event) {
+        event.preventDefault();
+        setupSelectionContainer();
+    });
 }
 
 function listenerStandard(event, title) {
@@ -60,7 +80,7 @@ function showSelection (){
                         "   <input type='text' name='entry_Text' id='entry_Text'>\n";
 
     if(!isEnd){
-        selectionContent += "   <label for project_selection><b>Projekt</b></label\n" + 
+        selectionContent += "   <label for project_selection><b>Projekt</b></label>\n" + 
                             "   <select id='project_selection'>\n" +
                             "       <option>Projekt1</option>\n" +
                             "       <option>Projekt2</option>\n" +
@@ -198,6 +218,7 @@ function sendTable(){
     request.open("POST","../php/save.php");
     request.send(data);
     $('#save_form').empty();
+    init();
 }  
 
 function htmlSetup(caseStr) {

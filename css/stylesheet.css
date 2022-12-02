@@ -30,8 +30,20 @@
     text-align: left;
 }
 
-.main_content {
+.main_body {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+}
+
+#button_container {
+    display: block;
+    padding: 1%;
+}
+
+.task_switch_container {
+    display: block;
 }
 
 .main_table, td {
