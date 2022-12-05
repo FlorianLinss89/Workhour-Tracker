@@ -320,6 +320,8 @@ function fillBody(username) {
                     "<button type='button' id='next_time_button'>&#8594</button>\n";
     $('#month_swapper').html(swapper);
 
+    setupTimeButtons();
+
     setupSelectionContainer();
 }
 

@@ -7,6 +7,20 @@ var columnNames = ["index", "user", "entry", "date", "start", "end", "project", 
 var selectionTitle;
 var isEnd = false;
 
+function setupTimeButtons() {
+
+    $('#previous_time_button').click(function(event) {
+        event.preventDefault();
+        showPreviousDate($('#year_selection').val());
+    });
+
+    $('#next_time_button').click(function(event) {
+        event.preventDefault();
+        showNextDate($('#year_selection').val());
+    });
+
+}
+
 function showSelectionButtons() {
 
     var buttonContainer =   "<button type='button' id='start_day_button'>Tag Beginnen</button>\n" +
@@ -48,16 +62,6 @@ function openSelection() {
     $('#delete_row_button').click(function(event) {
         event.preventDefault();
         rowDeletion();
-    });
-
-    $('#previous_time_button').click(function(event) {
-        event.preventDefault();
-        showPreviousDate($('#year_selection').val());
-    });
-
-    $('#next_time_button').click(function(event) {
-        event.preventDefault();
-        showNextDate($('#year_selection').val());
     });
 
     $('#close_selection_button').click(function(event) {
