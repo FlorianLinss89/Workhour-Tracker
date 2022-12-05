@@ -9,7 +9,7 @@
             "name": "Launch Chrome",
             "request": "launch",
             "type": "chrome",
-            "url": "http://localhost/trackertest/main/index.html",
+            "url": "http://localhost/trackertest/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

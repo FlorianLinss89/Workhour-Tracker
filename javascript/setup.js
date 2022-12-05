@@ -144,8 +144,11 @@ function weekData(dateCheck) {
                 }
             }
             else {
+                let friday = parseInt(dateCheck[0])-3;
+                if(friday < 10) friday = "0" + parseInt(friday);
+
                 for(var u of userData){ // go through the data from the server
-                    if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + (dateCheck[0]-3))) {
+                    if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + friday)) {
                         insert.push(u); // store Data in array, if the Dates match
                     }
                 }                
@@ -165,9 +168,10 @@ function weekData(dateCheck) {
                 }
             }
             else {
-                dateCheck[0] = parseInt(dateCheck[0])+3;
+                let monday = parseInt(dateCheck[0])+2;
+                if(monday < 10) monday = "0" + parseInt(monday);
                 for(var u of userData){ // go through the data from the server
-                    if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + (dateCheck[0]))) {
+                    if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + monday)) {
                         insert.push(u); // store Data in array, if the Dates match
                     }
                 } 
@@ -185,18 +189,20 @@ function weekData(dateCheck) {
             if(endCheck < 1) { // checking for end of Month
                 if(dateCheck[1] == 12) { // checking for end of year
                     dateCheck[2] = parseInt(dateCheck[2])+1;
-                    dateCheck[1] = 1;
-                    dateCheck[0] = 1;
+                    dateCheck[1] = "01";
+                    dateCheck[0] = "01";
                 }
                 else {
                     dateCheck[1] = parseInt(dateCheck[1]) + 1;
-                    dateCheck[0] = 1;
+                    dateCheck[0] = "01";
                 }
             }
             else dateCheck[0] = parseInt(dateCheck[0]) + 1;
-            if(dateCheck[0] < 10) dateCheck[0] = "0" + toString(dateCheck[0]);
+            
         }
 
+        if(dateCheck[0] < 10) dateCheck[0] = "0" + parseInt(dateCheck[0]);
+        if(dateCheck[1] < 10) dateCheck[1] = "0" + parseInt(dateCheck[1]);
     }
 
     return insert;
@@ -334,7 +340,7 @@ function setupSelectionContainer() {
 
 function fillFoot() {
     var linkData;
-    linkData = "<a href=http://localhost/trackertest/main/index.html>Login</a>"
+    linkData = "<a href=http://localhost/trackertest/index.html>Login</a>"
 
     $('#link_space').html(linkData);
 }
