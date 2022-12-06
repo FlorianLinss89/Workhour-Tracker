@@ -21,13 +21,26 @@
 .main_box {
     border: 0.2em solid;
     border-color: rgb(114, 8, 8);
-    background-color: rgb(106, 104, 204);
+    background-color: rgb(167, 167, 167);
 }
 
 .sub_headline {
-    background-color: rgb(106, 104, 204);
-    color: rgb(255, 255, 255);
+    background-color: rgb(167, 167, 167);
     text-align: left;
+}
+
+.subheader {
+    display: flex;
+}
+
+#user_data {
+    flex: 0 0 auto;
+    width: 75%;
+}
+
+#date_selection {
+    flex: 0 0 auto;
+    width: 25%;
 }
 
 .main_body {
@@ -83,4 +96,12 @@ footer {
 .bottom_display:nth-child(3n) {
     grid-column: 3/4;
     grid-row: 1/2;
+}
+
+button {
+    margin: 1em;
+}
+
+label {
+    margin: 1em;
 }

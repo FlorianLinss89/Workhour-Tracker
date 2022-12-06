@@ -1,36 +1,64 @@
-var date = new Date();
-var month = parseInt(date.getMonth())+1;
-var dateStr = date.getDate() + '.' + month + '.' + date.getFullYear();
-var switchTime = roundToQuarterHour(date);
+let date = new Date();
+let month = parseInt(date.getMonth())+1;
+let dateStr = date.getDate() + '.' + month + '.' + date.getFullYear();
+let switchTime = roundToQuarterHour(date);
 
-var columnNames = ["index", "user", "entry", "date", "start", "end", "project", "hours"];
-var selectionTitle;
-var isEnd = false;
+let columnNames = ["index", "user", "entry", "date", "start", "end", "project", "hours"];
+let selectionTitle;
+let isEnd = false;
 
 function setupTimeButtons() {
 
     $('#previous_time_button').click(function(event) {
         event.preventDefault();
-        showPreviousDate($('#year_selection').val());
+        showPreviousDate($('#range_selection').val());
     });
 
     $('#next_time_button').click(function(event) {
         event.preventDefault();
-        showNextDate($('#year_selection').val());
+        showNextDate($('#range_selection').val());
+    });
+
+    $('#submit_date_selection').click(function(event) {
+        event.preventDefault();
+        dateSelectionSetup();
     });
 
 }
 
+function dateSelectionSetup() {
+    let yearStr = $('#year_selector').val();
+    let monthStr = $('#month_selector').val();
+    let dayStr = $('#day_selector').val();
+    let displayStr = $('#range_selection').val();
+
+    switch(displayStr) {
+
+        case displayOptions[0]: 
+            currentMonth = monthStr + "." + yearStr;
+            break;
+        case displayOptions[1]:  
+            currentWeek = getWeekNumber([dayStr, monthStr, yearStr]) + "." + yearStr;
+            break;
+        case displayOptions[2]: 
+            currentDay = dayStr + "." + monthStr + "." + yearStr;
+            break;
+        default: return;
+    }
+
+    displaySwap(displayStr);
+}
+
 function showSelectionButtons() {
 
-    var buttonContainer =   "<button type='button' id='start_day_button'>Tag Beginnen</button>\n" +
+    let buttonContainer =   "<button type='button' id='start_day_button'>Tag Beginnen</button>\n" +
                             "<button type='button' id='switch_button'>Project Wechseln</button>\n" +
                             "<button type='button' id='end_day_button'>Tag Beenden</button>\n" +
                             "<button type='button' id='save_changes_button'>Änderungen Speichern</button>\n" +
                             "<button type='button' id='delete_row_button'>Zeile Löschen</button>\n";
     $('#button_container').html(buttonContainer);
 
-    var closeButton = "<button type='button' id='close_selection_button'>Bearbeitung beenden</button>\n";
+    let closeButton = "<button type='button' id='close_selection_button'>Bearbeitung beenden</button>\n";
     $('#close_switch_container').html(closeButton);
 
     openSelection();
@@ -78,7 +106,7 @@ function listenerStandard(event, title) {
 
 function showSelection (){
 
-    var selectionContent = "";
+    let selectionContent = "";
 
     selectionContent += "<h3>" + selectionTitle + "</h3>" +
                         "   <input type='text' name='entry_Text' id='entry_Text'>\n";
@@ -111,25 +139,25 @@ function switchSubmit() {
     $('#confirm_switch').click(function (event) {
         event.preventDefault();
  
-        var userName = $('#target_user').val();
+        let userName = $('#target_user').val();
  
-        var calcTime = $('#target_start').val();
-        var array = calcTime.split(":");
-        var calcMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+        let calcTime = $('#target_start').val();
+        let array = calcTime.split(":");
+        let calcMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
  
-        var switchTime = $('#time_offset').val();
+        let switchTime = $('#time_offset').val();
         array = switchTime.split(":");
-        var switchMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+        let switchMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
         $('#target_end').attr('value',switchTime);
  
-        var hours = parseFloat((switchMinutes-calcMinutes)/60).toFixed(2);
+        let hours = parseFloat((switchMinutes-calcMinutes)/60).toFixed(2);
         $('#target_hours').attr('value',hours);
 
         removeIds();
        
-        var row = "<tr>";
-        var tdEntries = ["", userName, $('#entry_Text').val(), dateStr, switchTime, "", $('#project_selection').val(), ""];
-        for(var i=0; i< columnNames.length; i++) {
+        let row = "<tr>";
+        let tdEntries = ["", userName, $('#entry_Text').val(), dateStr, switchTime, "", $('#project_selection').val(), ""];
+        for(let i=0; i< columnNames.length; i++) {
             row += htmlSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
         }
         row += "</tr>"
@@ -145,9 +173,9 @@ function startSubmit() {
 
         event.preventDefault();
  
-        var userName = $('#target_user').val();
-        var startTime = $('#time_offset').val();
-        var check = parseInt($('#target_date').val());
+        let userName = $('#target_user').val();
+        let startTime = $('#time_offset').val();
+        let check = parseInt($('#target_date').val());
  
         if(check == 0) {
          $('#setup_row').remove();
@@ -157,9 +185,9 @@ function startSubmit() {
             removeIds();
         }
 
-        var row = "<tr>";
-        var tdEntries = ["", userName, $('#entry_Text').val(), dateStr, startTime, "", $('#project_selection').val(), ""];
-        for(var i=0; i< columnNames.length; i++) {
+        let row = "<tr>";
+        let tdEntries = ["", userName, $('#entry_Text').val(), dateStr, startTime, "", $('#project_selection').val(), ""];
+        for(let i=0; i< columnNames.length; i++) {
             row += htmlSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
         }
         row += "</tr>"
@@ -174,16 +202,16 @@ function endSubmit() {
     $('#confirm_switch').click(function (event) {
        event.preventDefault();
 
-       var calcTime = $('#target_start').val();
-       var array = calcTime.split(":");
-       var calcMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+       let calcTime = $('#target_start').val();
+       let array = calcTime.split(":");
+       let calcMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
 
-       var switchTime = $('#time_offset').val();
+       let switchTime = $('#time_offset').val();
        array = switchTime.split(":");
-       var switchMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+       let switchMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
        $('#target_end').attr('value',switchTime);
 
-       var hours = parseFloat((switchMinutes-calcMinutes)/60).toFixed(2);
+       let hours = parseFloat((switchMinutes-calcMinutes)/60).toFixed(2);
        $('#target_hours').attr('value',hours);
 
        $('#target_entry').attr($('value','#entry_Text').val());
@@ -193,7 +221,7 @@ function endSubmit() {
 
 function openSaveFunction() {
 
-    var box = document.getElementById('save_confirmation');
+    let box = document.getElementById('save_confirmation');
     
     if(box.checked) sendTable(); 
     
@@ -203,16 +231,16 @@ function openSaveFunction() {
 
 function sendTable(){
 
-    var saveForm =  "<form method='post' name= 'save_form' action='save.php' id='table_form'>\n";
+    let saveForm =  "<form method='post' name= 'save_form' action='save.php' id='table_form'>\n";
     $('#main_content').find('td').each(function(){
         saveForm += $(this).html();
     });
     saveForm +="</form>";
     $('#save_form').html(saveForm);
 
-    var data = new FormData(document.getElementById('table_form'));
+    let data = new FormData(document.getElementById('table_form'));
 
-    var request = new XMLHttpRequest();
+    let request = new XMLHttpRequest();
     request.addEventListener('load', function(event) {
         if (request.status >= 200 && request.status < 300) {
             console.log(request.responseText);
@@ -226,11 +254,11 @@ function sendTable(){
 }  
 
 function htmlSetup(caseStr) {
-    var idxClass = "";
-    var elementClass = "";
+    let idxClass = "";
+    let elementClass = "";
     if(caseStr === 'index' || caseStr === 'entry') idxClass = "class='" + caseStr + "_class' ";
     if(caseStr === 'index' || caseStr === 'user') elementClass = "class='hidden_column' ";
-    var returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text'" + idxClass + " onchange='valueEqualize(this)' id='target_" + caseStr + "' name='" + caseStr + "[]' value='"
+    let returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text'" + idxClass + " onchange='valueEqualize(this)' id='target_" + caseStr + "' name='" + caseStr + "[]' size='11' value='"
     return returnStr;
 }
 
@@ -239,15 +267,15 @@ function valueEqualize(element) {
 }
 
 function removeIds() {
-    var removeList = ['target_index', 'target_user', 'target_entry', 'target_date', 'target_start', 'target_end', 'target_project', 'target_hours'];
-    for(var i=0; i<removeList.length; i++) {
+    let removeList = ['target_index', 'target_user', 'target_entry', 'target_date', 'target_start', 'target_end', 'target_project', 'target_hours'];
+    for(let i=0; i<removeList.length; i++) {
         $('#' + removeList[i]).removeAttr('id');
     }
 }
 
 function roundToQuarterHour(date) {
     p = 15 * 60 * 1000; // milliseconds in a quarterhour
-    var quarter = new Date(Math.round(date.getTime() / p ) * p);
+    let quarter = new Date(Math.round(date.getTime() / p ) * p);
     return quarter.toLocaleTimeString();
 }
 
@@ -255,9 +283,9 @@ function rowDeletion() {
     
     $('#main_head').find('tr').append( "<th id='delete_head' name='delete'>Löschen</th>");
     
-    var rowsToRemove = [];
-    var rows = document.getElementById('work_body').getElementsByTagName('tr');
-    for (var i=0; i<rows.length; i++) {
+    let rowsToRemove = [];
+    let rows = document.getElementById('work_body').getElementsByTagName('tr');
+    for (let i=0; i<rows.length; i++) {
         rows[i].innerHTML += "<td><input type='checkbox' class='delete_input' id='delete_check" + i + "' unchecked></td>";
     }
 
@@ -267,7 +295,7 @@ function rowDeletion() {
        event.preventDefault();
 
        $('.delete_input').filter(function(){
-        var r = $(this).siblings('.index_class').val();
+        let r = $(this).siblings('.index_class').val();
         rowsToRemove.push(r);
         return $(this).prop('checked');
        }).parentsUntil('tbody').remove();
@@ -281,7 +309,7 @@ function rowDeletion() {
 function showPreviousDate(displayString) {
 
     if(displayString == displayOptions[0]) {
-        var monthHelp = currentMonth.split(".");
+        let monthHelp = currentMonth.split(".");
 
         if(monthHelp[0]<11){
             if(monthHelp[0]<2){
@@ -297,7 +325,7 @@ function showPreviousDate(displayString) {
     }
 
     else if(displayString == displayOptions[1]) {
-        var weekHelp = currentWeek.split(".");
+        let weekHelp = currentWeek.split(".");
     
         if(weekHelp[0]<11){
             if(weekHelp[0]<2){
@@ -339,7 +367,7 @@ function showNextDate(displayString) {
 
     if(displayString == displayOptions[0]) {
 
-        var monthHelp = currentMonth.split(".");
+        let monthHelp = currentMonth.split(".");
     
         if(monthHelp[0]<9){
             monthHelp[0] = "0" + (parseInt(monthHelp[0])+1);
@@ -356,13 +384,13 @@ function showNextDate(displayString) {
 
     else if(displayString == displayOptions[1]) {
         
-        var weekHelp = currentWeek.split(".");
+        let weekHelp = currentWeek.split(".");
     
         if(weekHelp[0]<9){
             weekHelp[0] = "0" + (parseInt(weekHelp[0])+1);
         }
         else {
-            var maxWeek = getWeekNumber([31, 12, weekHelp[1]])
+            let maxWeek = getWeekNumber([31, 12, weekHelp[1]])
             if(weekHelp[0]>(maxWeek-1)) {
                 weekHelp[1]++;
                 weekHelp[0] = "01";

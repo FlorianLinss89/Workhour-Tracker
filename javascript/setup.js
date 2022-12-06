@@ -1,12 +1,12 @@
-var username ="Benutzer";
-var columnNames = ["index", "user", "entry", "date", "start", "end", "project", "hours"];
-var months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-var displayOptions = ["Monatsübersicht","Wochenübersicht","Tagesübersicht"];
-var currentMonth = "";
-var currentWeek = "";
-var currentDay = "";
-var currentDisplay = "";
-var userData;
+let username ="Benutzer";
+let columnNames = ["index", "user", "entry", "date", "start", "end", "project", "hours"];
+let months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+let displayOptions = ["Monatsübersicht","Wochenübersicht","Tagesübersicht"];
+let currentMonth = "";
+let currentWeek = "";
+let currentDay = "";
+let currentDisplay = "";
+let userData;
 
 function init() {
     const xhttp = new XMLHttpRequest();
@@ -45,14 +45,14 @@ function transformData(data) {
 
 function structureSite(displayString) {
 
-    var workhoursTable = "";
+    let workhoursTable = "";
 
-    var thEntries = ["Index", "User" ,"Eintrag", "Datum", "Beginn", "Ende", "Projekt", "Stunden"];
+    let thEntries = ["Index", "User" ,"Eintrag", "Datum", "Beginn", "Ende", "Projekt", "Stunden"];
     workhoursTable +=   "<table id='main_table' class='main_table' name='main_table'>\n" +
                         "   <thead id='main_head'>\n" +
                         "       <tr>\n"; 
-                        for(var i=0; i<columnNames.length; i++) {
-                            var elementClass = "";
+                        for(let i=0; i<columnNames.length; i++) {
+                            let elementClass = "";
                             if (i==0 || i ==1) elementClass = "class='hidden_column'";
                             workhoursTable +="     <th id='" + columnNames[i] + "'" + elementClass + " name='" + columnNames[i] + "[]'>" + thEntries[i] + "</th>\n"
                         }
@@ -60,7 +60,7 @@ function structureSite(displayString) {
                         "   </thead>\n" +
                         "   <tbody id='work_body'>\n";
 
-    var insert = [];
+    let insert = [];
     switch(displayString) {
         case "month": 
             insert = monthData(currentDisplay.split("."));
@@ -74,23 +74,23 @@ function structureSite(displayString) {
         default: dateCheck = monthData.split(".");
     }
 
-    var r=0;
+    let r=0;
     if(Array.isArray(insert)){
         for(r=0;r<insert.length; r++) {
 
-            var row = insert[r];
-            var dateHelp = (row['task_date']).split("-");
-            var dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
-            var tdEntries = [row['task_index'], row['task_user'], row['task_entry'], dateValue, row['task_start'], row['task_end'], row['task_project'], row['task_hours']];
+            let row = insert[r];
+            let dateHelp = (row['task_date']).split("-");
+            let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
+            let tdEntries = [row['task_index'], row['task_user'], row['task_entry'], dateValue, row['task_start'], row['task_end'], row['task_project'], row['task_hours']];
             
             workhoursTable +=   "    <tr>\n";
             if(r == insert.length-1){
-                for(var i =0; i<columnNames.length; i++) {
+                for(let i =0; i<columnNames.length; i++) {
                     workhoursTable += htmlSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
                 }   
             }
             else {
-                for(var i =0; i<columnNames.length; i++) {
+                for(let i =0; i<columnNames.length; i++) {
                     workhoursTable += tableSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
                 }
             } 
@@ -105,9 +105,9 @@ function structureSite(displayString) {
     $('#main_content').html(workhoursTable);
 
     function firstRow(entry) {
-        var help = entry;
+        let help = entry;
         workhoursTable +=   "    <tr id='setup_row'>\n";
-        for(var i =0; i<columnNames.length; i++) {
+        for(let i =0; i<columnNames.length; i++) {
             if (i==1) entry = username;
             else entry = help;
             workhoursTable += htmlSetup(columnNames[i]) + entry + "'></td>\n";
@@ -117,8 +117,8 @@ function structureSite(displayString) {
 }
 
 function monthData(dateCheck) {
-    var insert = [];
-    for(var i of userData){
+    let insert = [];
+    for(let i of userData){
         if((i['task_date']).includes(dateCheck[1] + "-" + dateCheck[0])) {
             insert.push(i);
         }
@@ -127,17 +127,17 @@ function monthData(dateCheck) {
 }
 
 function weekData(dateCheck) {
-    var insert = [];
-    var dateHelp = "";
-    var endCheck;
+    let insert = [];
+    let dateHelp = "";
+    let endCheck;
 
-    for(var i=0; i<7; i++) {
+    for(let i=0; i<7; i++) {
 
         if(i == 0) { // include previous Friday
 
             if(dateCheck[0] <4){ // checking for beginning of Month
                 dateHelp = new Date(dateCheck[2], dateCheck[1]-1, 0); // create new Date to get the number of days of the previous month 
-                for(var u of userData){ // go through the data from the server
+                for(let u of userData){ // go through the data from the server
                     if((u['task_date']).includes((dateHelp.getFullYear()) + "-" + (dateHelp.getMonth()+1) + "-" + (dateHelp.getDate() + (dateCheck[0]-3)))) {
                         insert.push(u); // store Data in array, if the Dates match
                     }
@@ -147,7 +147,7 @@ function weekData(dateCheck) {
                 let friday = parseInt(dateCheck[0])-3;
                 if(friday < 10) friday = "0" + parseInt(friday);
 
-                for(var u of userData){ // go through the data from the server
+                for(let u of userData){ // go through the data from the server
                     if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + friday)) {
                         insert.push(u); // store Data in array, if the Dates match
                     }
@@ -161,7 +161,7 @@ function weekData(dateCheck) {
             endCheck = dateHelp.getDate() - dateCheck[0];
             if(endCheck <3) { // checking for end of Month
                 dateHelp = new Date(dateCheck[2], dateCheck[1], 1); // create new Date for the next month
-                for(var u of userData){ // go through the data from the server
+                for(let u of userData){ // go through the data from the server
                     if((u['task_date']).includes((dateHelp.getFullYear()) + "-" + (dateHelp.getMonth()+1) + "-" + (dateHelp.getDate() + (3-endCheck)))) {
                         insert.push(u); // store Data in array, if the Dates match
                     }
@@ -170,7 +170,7 @@ function weekData(dateCheck) {
             else {
                 let monday = parseInt(dateCheck[0])+2;
                 if(monday < 10) monday = "0" + parseInt(monday);
-                for(var u of userData){ // go through the data from the server
+                for(let u of userData){ // go through the data from the server
                     if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + monday)) {
                         insert.push(u); // store Data in array, if the Dates match
                     }
@@ -179,7 +179,7 @@ function weekData(dateCheck) {
         }
 
         else {
-            for(var u of userData){ // go through the data from the server
+            for(let u of userData){ // go through the data from the server
                 if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + (dateCheck[0]))) {
                     insert.push(u); // store Data in array, if the Dates match
                 }
@@ -209,71 +209,71 @@ function weekData(dateCheck) {
 }
 
 function dayData(dateCheck) {
-    var insert = [];
-    var curentDate = new Date(dateCheck[2], dateCheck[1]-1, dateCheck[0]);
-    var dateHelp = "";
+    let insert = [];
+    let curentDate = new Date(dateCheck[2], dateCheck[1]-1, dateCheck[0]);
+    let dateHelp = "";
 
-    let day = 0;
-    let month = 0;
-    let year = 0;
+    let daySetter = 0;
+    let monthSetter = 0;
+    let yearSetter = 0;
 
     let test = curentDate.getUTCDay();
 
-    for(var i=0; i<3; i++) {
+    for(let i=0; i<3; i++) {
 
         if(i==0) {
 
             if((curentDate.getUTCDay()) == 0) { // check for Mondays
-                day = (parseInt(dateCheck[0])-3);
+                daySetter = (parseInt(dateCheck[0])-3);
             }
-            else day = (parseInt(dateCheck[0])-1);
+            else daySetter = (parseInt(dateCheck[0])-1);
 
-            if(day < 1){ // checking for beginning of Month
+            if(daySetter < 1){ // checking for beginning of Month
                 dateHelp = new Date(dateCheck[2], dateCheck[1]-1, 0); // create new Date to get the number of days of the previous month 
-                day = dateHelp.getDate() + day;
-                month = dateHelp.getMonth();
-                year = dateHelp.getFullYear();
+                daySetter = dateHelp.getDate() + daySetter;
+                monthSetter = dateHelp.getMonth();
+                yearSetter = dateHelp.getFullYear();
             }
             else {
-                month = dateCheck[1];
-                year = dateCheck[2];
+                monthSetter = dateCheck[1];
+                yearSetter = dateCheck[2];
             }
         }
 
         else if(i==1) {
-            day = dateCheck[0];
-            month = dateCheck[1];
-            year = dateCheck[2];
+            daySetter = dateCheck[0];
+            monthSetter = dateCheck[1];
+            yearSetter = dateCheck[2];
         }
 
         else {
 
             if((curentDate.getUTCDay()) == 4) { // check for Fridays
-                day = (parseInt(dateCheck[0])+3);
+                daySetter = (parseInt(dateCheck[0])+3);
             }
-            else day = (parseInt(dateCheck[0])+1);
+            else daySetter = (parseInt(dateCheck[0])+1);
 
             dateHelp = new Date(dateCheck[2], dateCheck[1], 0); // create new Date to get the number of days of the current month
-            let endCheck = dateHelp.getDate() - day;
+            let endCheck = dateHelp.getDate() - daySetter;
 
             if(endCheck < 0) { // checking for end of Month
                 dateHelp = new Date(dateCheck[2], dateCheck[1], 1); // create new Date for the next month
-                day = dateHelp.getDate() - endCheck;
-                month = dateHelp.getMonth() + 1;
-                year = dateHelp.getFullYear();
+                daySetter = dateHelp.getDate() - endCheck;
+                monthSetter = dateHelp.getMonth() + 1;
+                yearSetter = dateHelp.getFullYear();
             }
 
             else {
-                month = dateCheck[1];
-                year = dateCheck[2];
+                monthSetter = dateCheck[1];
+                yearSetter = dateCheck[2];
             }
         }
 
-        if(day < 10) day = "0" + parseInt(day);
-        if(month < 10) month = "0" + parseInt(month);
+        if(daySetter < 10) daySetter = "0" + parseInt(daySetter);
+        if(monthSetter < 10) monthSetter = "0" + parseInt(monthSetter);
 
-        for(var u of userData){ // go through the data from the server
-            if((u['task_date']).includes(year + "-" + month + "-" + day)) {
+        for(let u of userData){ // go through the data from the server
+            if((u['task_date']).includes(yearSetter + "-" + monthSetter + "-" + daySetter)) {
                 insert.push(u); // store Data in array, if the Dates match
             }
         } 
@@ -290,8 +290,8 @@ function fillSite(username) {
 }
 
 function fillHead(){
-    var headPanel = "";
-    var image = "../imageFiles/cropped-orcas-logo-orange.png";
+    let headPanel = "";
+    let image = "../imageFiles/cropped-orcas-logo-orange.png";
     headPanel += "<figure>\n <img src='" + image + "' alt='Orcas Logo' class='header_symbol'>\n </figure>\n";
     headPanel += "<h1 class='header_text'>Orcas Arbeitszeit-Dokumentation</h1>";
 
@@ -299,24 +299,45 @@ function fillHead(){
 }
 
 function fillBody(username) {
-    var buttonContainer = "";
 
-    var displayData =  "<label for='username'><b>Mitarbeiter:</b></label>\n" +
+    let userData =  "<label for 'username'><b>Mitarbeiter:</b></label>\n" +
                     "<label id='username'><b>" + username + "</b></label>\n" + 
-                    "<label for='clock'><b>Uhrzeit:</b></label>\n" + 
+                    "<label for 'clock'><b>Uhrzeit:</b></label>\n" + 
                     "<label id='clock'><b></b></label>\n";
-    $('#user_data').html(displayData);
+    $('#user_data').html(userData);
     refreshTime();
 
-    var displaySelector =   "   <label for display_selection><b>Anzeige:</b><label>\n" + 
-                            "   <select id='year_selection' onchange='displaySwap(this.value)'>\n";
-    for(var x of displayOptions) {
+    let dateData =  "<label for day_selector><b>Datumauswahl</b><label>\n"+
+                    "<select id='day_selector'>\n" +
+                    "</select>\n" +
+                    "<select id='month_selector' onchange='daySelectorUpdate(this.value)'>\n";
+
+    for(let i=1; i<13; i++) {
+        dateData += "   <option>" + i + "</option>\n";
+    }
+    
+    dateData +=     "</select>\n" +
+                    "<select id='year_selector'>\n" +
+                    "</select>\n" +
+                    "<button type='button' id='submit_date_selection'>Anzeigen</button>\n";
+
+    $('#date_selection').html(dateData);
+
+    daySelectorUpdate(date.getMonth()+1);
+    yearSelectorUpdate(date.getFullYear());
+    $('#day_selector').val(date.getDate());
+    $('#month_selector').val(date.getMonth()+1);
+    $('#year_selector').val(date.getFullYear());
+
+    let displaySelector =   "   <label for display_selection><b>Anzeige:</b><label>\n" + 
+                            "   <select id='range_selection' onchange='displaySwap(this.value)'>\n";
+    for(let x of displayOptions) {
         displaySelector +=  "       <option>" + x + "</option>\n";
     }
     displaySelector +=      "   </select>\n";
     $('#display_selector').html(displaySelector);
 
-    var swapper =   "<button type='button' id='previous_time_button' class='swap_month_button'>&#8592</button>\n" +
+    let swapper =   "<button type='button' id='previous_time_button' class='swap_month_button'>&#8592</button>\n" +
                     "<span><strong id='table_caption'></strong></span>\n" +
                     "<button type='button' id='next_time_button'>&#8594</button>\n";
     $('#month_swapper').html(swapper);
@@ -326,13 +347,32 @@ function fillBody(username) {
     setupSelectionContainer();
 }
 
+function daySelectorUpdate(monthStr){
+    let entries = "";
+    let dateHelp = new Date(date.getFullYear(), monthStr, 0);
+    for(let i=1; i<=dateHelp.getDate();i++) {
+        entries +=  "<option>" + i + "</option>\n";
+    }
+    $('#day_selector').html(entries);
+    $('#day_selector').val("1");
+}
+
+function yearSelectorUpdate(yearStr){
+    let entries;
+    for(let i=2010; i< 2030; i++) {
+        entries +=  "<option>" + i + "</option>\n";
+    }
+    $('#year_selector').html(entries);
+    $('#day_selector').val(yearStr);
+}
+
 function setupSelectionContainer() {
 
     $('#close_switch_container').html("");
     $('#selection_header').html("");
     $('#selection_container').html("");
 
-    var buttonContainer =   "<button type='button' id='show_selection_button'>Tabelle bearbeiten</button>\n";
+    let buttonContainer =   "<button type='button' id='show_selection_button'>Tabelle bearbeiten</button>\n";
     $('#button_container').html(buttonContainer);
 
     $('#show_selection_button').click(function(event) {
@@ -342,7 +382,7 @@ function setupSelectionContainer() {
 }
 
 function fillFoot() {
-    var linkData;
+    let linkData;
     linkData = "<a href=http://localhost/trackertest/index.html>Login</a>"
 
     $('#link_space').html(linkData);
@@ -350,12 +390,12 @@ function fillFoot() {
 
 function fillSideBar() {
     
-    var projectAmount = 1;
-    var check = [];
+    let projectAmount = 1;
+    let check = [];
 
     try {
         check[0] = userData[0]['task_project'];
-        for(var i of userData) {
+        for(let i of userData) {
             if(!(check.indexOf(i['task_project'])>-1)) {
                 check.push(i['task_project']);
                 projectAmount++;
@@ -373,33 +413,33 @@ function fillSideBar() {
 function fillSideBarTables(amount, check, data) {
 
     if(amount>0) {
-        var projectColumns = ["entry", "date", "start", "hours"];
-        var thEntries = ["Eintrag", "Datum", "Beginn", "Stunden"];
-        var bottomDisplay = "";
+        let projectColumns = ["entry", "date", "start", "hours"];
+        let thEntries = ["Eintrag", "Datum", "Beginn", "Stunden"];
+        let bottomDisplay = "";
         check.sort();
-        for(var i=0;i<amount;i++){
+        for(let i=0;i<amount;i++){
 
             bottomDisplay += "<div class='bottom_element'>";
-            var sideTable = "";
+            let sideTable = "";
             sideTable +=    "<table id='" + check[i] + "_table' class='project_table'>\n" +
                             "   <caption><strong>" + check[i] + "</strong></caption>\n" +
                             "   <thead class='project_head'>\n" +
                             "       <tr>\n"; 
-            for(var j=0; j<thEntries.length; j++) {
+            for(let j=0; j<thEntries.length; j++) {
                 sideTable +="           <th id='" + projectColumns[j] + "'>" + thEntries[j] + "</th>\n"
             }
             sideTable +=    "       </tr>\n" +
                             "   </thead>\n" +
                             "   <tbody id='work_body'>\n";
 
-            for(var d of data){
+            for(let d of data){
                 if(check[i] == d['task_project']) {
-                    var row = d;
-                    var dateHelp = (row['task_date']).split("-");
-                    var dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
+                    let row = d;
+                    let dateHelp = (row['task_date']).split("-");
+                    let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
                     sideTable +="       <tr>\n";
-                    var tdEntries = [row['task_entry'], dateValue, row['task_start'], row['task_hours']];
-                    for(var k =0; k<projectColumns.length; k++) {
+                    let tdEntries = [row['task_entry'], dateValue, row['task_start'], row['task_hours']];
+                    for(let k =0; k<projectColumns.length; k++) {
                         sideTable += tableSetup(projectColumns[k]) + tdEntries[k] + "'></td>\n";
                     }
                 }
@@ -423,18 +463,18 @@ function refreshTime() {
 }setInterval(refreshTime,1000);
 
 function tableSetup(caseStr) {
-    var posClass = "";
-    var elementClass = "";
+    let posClass = "";
+    let elementClass = "";
     if(caseStr == 'entry') posClass = "class='entry_class' ";
     if(caseStr == 'index' || caseStr == 'user') elementClass = "class='hidden_column' ";
-    var returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text' " + posClass + "onchange='valueEqualize(this)' name='" + caseStr + "[]' value='"
+    let returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text' " + posClass + "onchange='valueEqualize(this)' name='" + caseStr + "[]' size='11' value='"
     return returnStr;
 }
 
 function dateSetup() {
 
     currentDay = dateStr;
-    var dateHelp = dateStr.split(".");
+    let dateHelp = dateStr.split(".");
     currentWeek = getWeekNumber(dateHelp) + "." + dateHelp[2];
     dateHelp.shift();
     setMonthDisplay(dateHelp);
@@ -451,8 +491,11 @@ function displaySwap(displayString) {
 }
 
 function setMonthDisplay(dateArray) {
+
+    if(dateArray[0] < 10) dateArray[0] = "0" + (parseInt(dateArray[0]));
+
     currentMonth = dateArray[0] + "." + dateArray[1];
-    var displayMonth = "Arbeitszeiten " + months[parseInt(dateArray[0])-1] + " " + dateArray[1];
+    let displayMonth = "Arbeitszeiten " + months[parseInt(dateArray[0])-1] + " " + dateArray[1];
     $('#table_caption').html(displayMonth);
     currentDisplay = currentMonth;
     structureSite("month");
@@ -460,7 +503,7 @@ function setMonthDisplay(dateArray) {
 
 function setWeekDisplay(dateArray) {
     currentWeek = dateArray[0] + "." + dateArray[1];
-    var displayWeek = "Arbeitszeiten Woche" + dateArray[0] + " " + dateArray[1];
+    let displayWeek = "Arbeitszeiten Woche" + dateArray[0] + " " + dateArray[1];
     $('#table_caption').html(displayWeek);
     currentDisplay = currentWeek;
     structureSite("week");
@@ -468,53 +511,53 @@ function setWeekDisplay(dateArray) {
 
 function setDayDisplay(dateArray) {
 
-    var dayHelp = parseInt(dateArray[0]);
-    var monthHelp = parseInt(dateArray[1]);
+    let dayHelp = parseInt(dateArray[0]);
+    let monthHelp = parseInt(dateArray[1]);
     
     if(dayHelp<10) dateArray[0] = "0" + dayHelp;
     if(monthHelp<10) dateArray[1] = "0" + monthHelp;
     
     currentDay = dateArray[0] + "." + dateArray[1] + "." + dateArray[2];
-    var displayDay = "Arbeitszeiten " + dateArray[0] + " " + dateArray[1] + " " + dateArray[2];
+    let displayDay = "Arbeitszeiten " + dateArray[0] + " " + dateArray[1] + " " + dateArray[2];
     $('#table_caption').html(displayDay);
     currentDisplay = currentDay;
     structureSite("day");
 }
 
 function getWeekNumber (dateArray) {
-     var dateHelp = new Date(Date.UTC(dateArray[2], dateArray[1]-1, dateArray[0])); // create UTC date
+     let dateHelp = new Date(Date.UTC(dateArray[2], dateArray[1]-1, dateArray[0])); // create UTC date
      dateHelp.setUTCDate(dateHelp.getUTCDate() + 4 - (dateHelp.getUTCDay()||7)); // set to nearest thursday
-     var yearStart = new Date(Date.UTC(dateArray[2],0,1)); // first day of the year
-     var week = Math.ceil(( ( (dateHelp - yearStart) / 86400000) + 1) / 7);
+     let yearStart = new Date(Date.UTC(dateArray[2],0,1)); // first day of the year
+     let week = Math.ceil(( ( (dateHelp - yearStart) / 86400000) + 1) / 7);
      return (week);
 }
 
 function weekReverse(weekString) {
     
-    var dayCount = weekString[0]*7; // total days for all weeks
-    var month = 1; // January is 1st month
-    var daysInMonth = 31; // setting January Days
-    var febDays = ((weekString[1]%4) === 0) ? 29 : 28; // checking for leap year
+    let dayCount = weekString[0]*7; // total days for all weeks
+    let monthInc = 1; // January is 1st month
+    let daysInMonth = 31; // setting January Days
+    let febDays = ((weekString[1]%4) === 0) ? 29 : 28; // checking for leap year
 
     while(dayCount>daysInMonth) { // check if month needs to be advanced
         dayCount -= daysInMonth; // reduce the restamount of days by the days in the relevent month
-        switch(month) {
+        switch(monthInc) {
             case 1: 
-                daysInMonth = febDays; month++; break; // January is extra Because Febuary has reduced amount of days
+                daysInMonth = febDays; monthInc++; break; // January is extra Because Febuary has reduced amount of days
             case 2: case 4: case 6: case 7: case 9: case 11: // followed by longer Month
-                daysInMonth = 31; month++; break;
+                daysInMonth = 31; monthInc++; break;
             case 3: case 5: case 8: case 10: // followed by shorter Month
-                daysInMonth = 30; month++; break;
+                daysInMonth = 30; monthInc++; break;
             case 12: // End of the Year, Weeks should not go beyond this
                 weekString[1] = parseInt(weekString[1]) + 1; // advance year
                 dayCount = 1;
-                month = 1;
+                monthInc = 1;
                 break;
-            default: month++;
+            default: monthInc++;
         }
     }
 
-    var dateHelp = new Date(Date.UTC(weekString[1], month-1, dayCount)); // create UTC date for the current week
+    let dateHelp = new Date(Date.UTC(weekString[1], monthInc-1, dayCount)); // create UTC date for the current week
     dateHelp.setUTCDate(dateHelp.getUTCDate() + 1 - (dateHelp.getUTCDay()||7)); // set to nearest monday
     return [dateHelp.getDate(), dateHelp.getMonth() + 1, dateHelp.getFullYear()];
 }
