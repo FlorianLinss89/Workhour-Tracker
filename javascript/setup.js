@@ -465,9 +465,13 @@ function refreshTime() {
 function tableSetup(caseStr) {
     let posClass = "";
     let elementClass = "";
-    if(caseStr == 'entry') posClass = "class='entry_class' ";
-    if(caseStr == 'index' || caseStr == 'user') elementClass = "class='hidden_column' ";
-    let returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text' " + posClass + "onchange='valueEqualize(this)' name='" + caseStr + "[]' size='11' value='"
+    let size = "size='11'";
+    if(caseStr === 'entry') {
+        posClass = "class='entry_class' ";
+        size = "size='20'";
+    }
+    if(caseStr === 'index' || caseStr === 'user') elementClass = "class='hidden_column' ";
+    let returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text' " + size + posClass + "onchange='valueEqualize(this)' name='" + caseStr + "[]' value='"
     return returnStr;
 }
 

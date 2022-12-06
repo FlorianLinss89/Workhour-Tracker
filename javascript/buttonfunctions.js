@@ -2,8 +2,6 @@ let date = new Date();
 let month = parseInt(date.getMonth())+1;
 let dateStr = date.getDate() + '.' + month + '.' + date.getFullYear();
 let switchTime = roundToQuarterHour(date);
-
-let columnNames = ["index", "user", "entry", "date", "start", "end", "project", "hours"];
 let selectionTitle;
 let isEnd = false;
 
@@ -256,9 +254,13 @@ function sendTable(){
 function htmlSetup(caseStr) {
     let idxClass = "";
     let elementClass = "";
-    if(caseStr === 'index' || caseStr === 'entry') idxClass = "class='" + caseStr + "_class' ";
+    let size = "size='11'"
+    if(caseStr === 'index' || caseStr === 'entry') {
+        idxClass = "class='" + caseStr + "_class' ";
+        size = "size='20'"
+    }
     if(caseStr === 'index' || caseStr === 'user') elementClass = "class='hidden_column' ";
-    let returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text'" + idxClass + " onchange='valueEqualize(this)' id='target_" + caseStr + "' name='" + caseStr + "[]' size='11' value='"
+    let returnStr = "     <td headers='" + caseStr + "'" + elementClass + "><input type='text'" + size + idxClass + " onchange='valueEqualize(this)' id='target_" + caseStr + "' name='" + caseStr + "[]' value='"
     return returnStr;
 }
 
