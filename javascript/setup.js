@@ -210,75 +210,76 @@ function weekData(dateCheck) {
 
 function dayData(dateCheck) {
     var insert = [];
-    var curentDate = new Date(dateCheck[2], dateCheck[1], dateCheck[0]);
+    var curentDate = new Date(dateCheck[2], dateCheck[1]-1, dateCheck[0]);
     var dateHelp = "";
-    var endCheck;
+
+    let day = 0;
+    let month = 0;
+    let year = 0;
+
+    let test = curentDate.getUTCDay();
 
     for(var i=0; i<3; i++) {
+
         if(i==0) {
 
-            var lastDay = 0;
-
-            if((curentDate.getUTCDay()||7) < 2) { // check for Mondays
-                lastDay = (dateCheck[0]-3);
+            if((curentDate.getUTCDay()) == 0) { // check for Mondays
+                day = (parseInt(dateCheck[0])-3);
             }
-            else lastDay = (dateCheck[0]-1);
+            else day = (parseInt(dateCheck[0])-1);
 
-            if(lastDay < 1){ // checking for beginning of Month
+            if(day < 1){ // checking for beginning of Month
                 dateHelp = new Date(dateCheck[2], dateCheck[1]-1, 0); // create new Date to get the number of days of the previous month 
-                lastDay = dateHelp.getDate() + lastDay;
-                for(var u of userData){ // go through the data from the server
-                    if((u['task_date']).includes(dateHelp.getFullYear() + "-" + dateHelp.getMonth() + "-" + lastDay)) {
-                        insert.push(u); // store Data in array, if the Dates match
-                    }
-                } 
+                day = dateHelp.getDate() + day;
+                month = dateHelp.getMonth();
+                year = dateHelp.getFullYear();
             }
             else {
-                for(var u of userData){ // go through the data from the server
-                    if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + lastDay)) {
-                        insert.push(u); // store Data in array, if the Dates match
-                    }
-                }
+                month = dateCheck[1];
+                year = dateCheck[2];
             }
         }
 
         else if(i==1) {
-            for(var u of userData){ // go through the data from the server
-                if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + dateCheck[0])) {
-                    insert.push(u); // store Data in array, if the Dates match
-                }
-            } 
+            day = dateCheck[0];
+            month = dateCheck[1];
+            year = dateCheck[2];
         }
 
         else {
-            var nextDay = 0;
-            if((curentDate.getUTCDay()||7) > 4) { // check for Fridays
-                nextDay = (dateCheck[0]+3);
+
+            if((curentDate.getUTCDay()) == 4) { // check for Fridays
+                day = (parseInt(dateCheck[0])+3);
             }
-            else nextDay = (dateCheck[0]+1);
+            else day = (parseInt(dateCheck[0])+1);
 
-            dateHelp = new Date(dateCheck[2], dateCheck[1], 0); // create new Date to get the number of days of the current month 
-            endCheck = dateHelp.getDate() - nextDay;
+            dateHelp = new Date(dateCheck[2], dateCheck[1], 0); // create new Date to get the number of days of the current month
+            let endCheck = dateHelp.getDate() - day;
 
-            if(endCheck <1) { // checking for end of Month
+            if(endCheck < 0) { // checking for end of Month
                 dateHelp = new Date(dateCheck[2], dateCheck[1], 1); // create new Date for the next month
-                for(var u of userData){ // go through the data from the server
-                    if((u['task_date']).includes((dateHelp.getFullYear()) + "-" + (dateHelp.getMonth()+1) + "-" + (dateHelp.getDate() - endCheck))) {
-                        insert.push(u); // store Data in array, if the Dates match
-                    }
-                }
+                day = dateHelp.getDate() - endCheck;
+                month = dateHelp.getMonth() + 1;
+                year = dateHelp.getFullYear();
             }
 
             else {
-                for(var u of userData){ // go through the data from the server
-                    if((u['task_date']).includes(dateCheck[2] + "-" + dateCheck[1] + "-" + nextDay)) {
-                        insert.push(u); // store Data in array, if the Dates match
-                    }
-                } 
+                month = dateCheck[1];
+                year = dateCheck[2];
             }
         }
+
+        if(day < 10) day = "0" + parseInt(day);
+        if(month < 10) month = "0" + parseInt(month);
+
+        for(var u of userData){ // go through the data from the server
+            if((u['task_date']).includes(year + "-" + month + "-" + day)) {
+                insert.push(u); // store Data in array, if the Dates match
+            }
+        } 
     }
 
+    return insert;
 
 }
 
@@ -470,12 +471,8 @@ function setDayDisplay(dateArray) {
     var dayHelp = parseInt(dateArray[0]);
     var monthHelp = parseInt(dateArray[1]);
     
-    if(dayHelp<10) {
-        dateArray[0] = "0" + dayHelp;
-    }
-    if(monthHelp<10) {
-        dateArray[1] = "0" + monthHelp;
-    }
+    if(dayHelp<10) dateArray[0] = "0" + dayHelp;
+    if(monthHelp<10) dateArray[1] = "0" + monthHelp;
     
     currentDay = dateArray[0] + "." + dateArray[1] + "." + dateArray[2];
     var displayDay = "Arbeitszeiten " + dateArray[0] + " " + dateArray[1] + " " + dateArray[2];

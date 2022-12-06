@@ -313,20 +313,24 @@ function showPreviousDate(displayString) {
     }
 
     else {
-        var dayHelp = currentDay.split(".");
-    
-        if(dayHelp[0]<11){
-            if(dayHelp[0]<2){ // check for beginning of month
-                var dateHelp = new Date(dayHelp[2], dayHelp[1]-1, 0); // create new Date to get the number of days of the previous month 
+        let dayHelp = currentDay.split(".");
+        let dateHelp = new Date(dayHelp[2], dayHelp[1]-1, dayHelp[0]);
+        
+        if((dateHelp.getUTCDay()) == 0) { // check for Mondays
+            dayHelp[0] = parseInt(dayHelp[0]) - 2;
+        }
+        dayHelp[0]--;
+        
+        if(dayHelp[0]<10){
+            if(dayHelp[0]<1){ // check for beginning of month
+                dateHelp = new Date(dayHelp[2], dayHelp[1]-1, 0); // create new Date to get the number of days of the previous month 
                 dayHelp[2] = dateHelp.getFullYear();
                 dayHelp[1] = dateHelp.getMonth()+1;
-                dayHelp[0] = dateHelp.getDate();
+                dayHelp[0] = dateHelp.getDate() + dayHelp[0];
             }
-            else dayHelp[0] = "0" + (parseInt(dayHelp[0])-1);
+            else dayHelp[0] = "0" + (parseInt(dayHelp[0]));
         }
-        else {
-            dayHelp[0]--;
-        }
+
         setDayDisplay(dayHelp);
     }
 }
@@ -370,33 +374,31 @@ function showNextDate(displayString) {
 
     else {
 
-        var dayHelp = currentDay.split(".");
+        let dayHelp = currentDay.split(".");
+        let dateHelp = new Date(dayHelp[2], dayHelp[1]-1, dayHelp[0]);
+        
+        if((dateHelp.getUTCDay()) == 4) { // check for Fridays
+            dayHelp[0] = parseInt(dayHelp[0]) + 2;
+        }
+        dayHelp[0]++;
 
-        if(dayHelp[0]<9) {
-            dayHelp[0] = "0" + (parseInt(dayHelp[0])+1);
-        }
-        else {
-            var dateHelp = new Date(dayHelp[2], dayHelp[1], 0); // create new Date to get the number of days of the current month 
-            var endCheck = dateHelp.getDate() - parseInt(dayHelp[0]);
-            if(endCheck<1){ // checking for end of Month
-                if(dayHelp[1] == 12) { // checking for end of year
-                    dayHelp[2] = parseInt(dayHelp[2])+1;
-                    dayHelp[1] = "01";
-                }
-                else if(dayHelp[1] > 8) {
-                    dayHelp[1]++;
-                }
-                else {
-                    dayHelp[1] = "0" + (parseInt(dayHelp[1])+1);
-                } 
-                dayHelp[0] = "01";
+        dateHelp = new Date(dayHelp[2], dayHelp[1], 0); // create new Date to get the number of days of the current month 
+        let endCheck = dateHelp.getDate() - parseInt(dayHelp[0]);
+        
+        if(endCheck<0){ // checking for end of Month
+            if(dayHelp[1] == 12) { // checking for end of year
+                dayHelp[2] = parseInt(dayHelp[2])+1;
+                dayHelp[1] = "01";
             }
-            else {
-                dayHelp[0]++;
+            else  {
+                dayHelp[1]++;
             }
+            dayHelp[0] = 1 - endCheck;
         }
-        setDayDisplay(dayHelp);
-    
+
+        if(dayHelp[1] < 9) dayHelp[1] = "0" + (parseInt(dayHelp[1]));
+        if(dayHelp[0] < 9) dayHelp[0] = "0" + (parseInt(dayHelp[0]));
+
+        setDayDisplay(dayHelp);   
     }
-
 }
