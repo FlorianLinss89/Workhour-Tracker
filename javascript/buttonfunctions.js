@@ -1,8 +1,7 @@
 let date = new Date();
 let month = parseInt(date.getMonth())+1;
 let dateStr = date.getDate() + '.' + month + '.' + date.getFullYear();
-let switchTime = roundToQuarterHour(date);
-let selectionTitle;
+let switchTime = roundToMinute(date);
 let isEnd = false;
 
 function setupTimeButtons() {
@@ -47,22 +46,22 @@ function dateSelectionSetup() {
     displaySwap(displayStr);
 }
 
-function showSelectionButtons() {
+function showEditButtons() {
 
-    let buttonContainer =   "<button type='button' id='start_day_button'>Tag Beginnen</button>\n" +
-                            "<button type='button' id='switch_button'>Project Wechseln</button>\n" +
-                            "<button type='button' id='end_day_button'>Tag Beenden</button>\n" +
-                            "<button type='button' id='save_changes_button'>Änderungen Speichern</button>\n" +
-                            "<button type='button' id='delete_row_button'>Zeile Löschen</button>\n";
-    $('#button_container').html(buttonContainer);
+    let buttonContainer =   "<button type='button' class='edit_table_button' id='start_day_button'>Tag Beginnen</button>\n" +
+                            "<button type='button' class='edit_table_button' id='switch_button'>Project Wechseln</button>\n" +
+                            "<button type='button' class='edit_table_button' id='end_day_button'>Tag Beenden</button>\n" +
+                            "<button type='button' class='edit_table_button' id='save_changes_button'>Änderungen Speichern</button>\n" +
+                            "<button type='button' class='edit_table_button' id='delete_row_button'>Zeile Löschen</button>\n";
+    $('#table_editing').html(buttonContainer);
 
     let closeButton = "<button type='button' id='close_selection_button'>Bearbeitung beenden</button>\n";
     $('#close_switch_container').html(closeButton);
 
-    openSelection();
+    setupEdits();
 }
 
-function openSelection() {
+function setupEdits() {
 
     $('#switch_button').click(function (event) {
         listenerStandard(event, "Projekt Wechseln");
@@ -97,39 +96,39 @@ function openSelection() {
 }
 
 function listenerStandard(event, title) {
-    event.preventDefault();
-    selectionTitle = title;
-    showSelection();
-}
 
-function showSelection (){
+    event.preventDefault();
 
     let selectionContent = "";
 
-    selectionContent += "<h3>" + selectionTitle + "</h3>" +
-                        "   <input type='text' name='entry_Text' id='entry_Text'>\n";
+    selectionContent += "<h3>" + title + "</h3>\n" +
+                        "<input type='text' name='entry_Text' id='entry_Text'>\n" +
+                        "<div class='table_entry_content'>\n";
 
-    if(!isEnd){
-        selectionContent += "   <label for project_selection><b>Projekt</b></label>\n" + 
-                            "   <select id='project_selection'>\n" +
-                            "       <option>Projekt1</option>\n" +
-                            "       <option>Projekt2</option>\n" +
-                            "       <option>Projekt3</option>\n" +
-                            "       <option>Projekt4</option>\n" +
-                            "   </select>\n" +
-                            "   <label for subtract_time>Anfangszeit</label>\n";
-    }
-    else {
-        selectionContent += "   <label for subtract_time>Uhrzeit</label>\n";
+    switch (title) { 
+        case "Tag Beginnen":
+            selectionContent += includeProjectSelection();
+            selectionContent += includeStartTime();
+            break;
+        case "Projekt Wechseln":
+            selectionContent += includeProjectSelection();
+            selectionContent += includeStopTime();
+            selectionContent += includeStartTime();
+            break;
+        case "Tag Beenden":
+            selectionContent += includeStopTime();
+            break;
+        default: selectionContent += "";
     }
 
-    selectionContent += "   <input type='time' name='Time_offset' value=" + switchTime + " id='time_offset'>\n" +
-                        "   <button type='button' class='input_button' id='confirm_switch'>OK</button>\n" +
-                        "   <label for save_confirmation>Speichern</label>\n" +
-                        "   <input type='checkbox' id='save_confirmation' unchecked>";
+    selectionContent += "<div>\n" +
+                        "   <label for save_confirmation id='save_edit_label'>Speichern:</label>\n" +
+                        "   <input type='checkbox' id='save_confirmation' unchecked>\n" +
+                        "</div>\n" +
+                        "   <button type='button' class='input_button' id='confirm_switch'>Tabelle aktualisieren</button>\n" +
+                        "</div>";
     $('#selection_container').html(selectionContent);
 
-    isEnd = false;
 }
 
 function switchSubmit() {
@@ -143,18 +142,20 @@ function switchSubmit() {
         let array = calcTime.split(":");
         let calcMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
  
-        let switchTime = $('#time_offset').val();
-        array = switchTime.split(":");
-        let switchMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
-        $('#target_end').attr('value',switchTime);
+        let endTime = $('#edit_time_end').val();
+        array = endTime.split(":");
+        let endMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+        $('#target_end').attr('value',endTime);
  
-        let hours = parseFloat((switchMinutes-calcMinutes)/60).toFixed(2);
+        let hours = parseFloat((endMinutes-calcMinutes)/60).toFixed(2);
         $('#target_hours').attr('value',hours);
+
+        let startTime = $('#edit_time_start').val();
 
         removeIds();
        
         let row = "<tr>";
-        let tdEntries = ["", userName, $('#entry_Text').val(), dateStr, switchTime, "", $('#project_selection').val(), ""];
+        let tdEntries = ["", userName, $('#entry_Text').val(), dateStr, startTime, "", $('#project_selection').val(), ""];
         for(let i=0; i< columnNames.length; i++) {
             row += htmlSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
         }
@@ -172,7 +173,7 @@ function startSubmit() {
         event.preventDefault();
  
         let userName = $('#target_user').val();
-        let startTime = $('#time_offset').val();
+        let startTime = $('#edit_time_start').val();
         let check = parseInt($('#target_date').val());
  
         if(check == 0) {
@@ -204,7 +205,7 @@ function endSubmit() {
        let array = calcTime.split(":");
        let calcMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
 
-       let switchTime = $('#time_offset').val();
+       let switchTime = $('#edit_time_end').val();
        array = switchTime.split(":");
        let switchMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
        $('#target_end').attr('value',switchTime);
@@ -217,6 +218,146 @@ function endSubmit() {
     });   
 }
 
+function showInsertButtons() {
+
+    let buttonContainer =   "<button type='button' class='edit_table_button' id='start_end_time_button'>Anfangs- und Endzeit eingeben</button>\n" +
+                            "<button type='button' class='edit_table_button' id='start_duration_button'>Anfangszeit und Dauer eingeben</button>\n" +
+                            "<button type='button' class='edit_table_button' id='end_duration_button'>Endzeit und Dauer eingeben</button>\n";
+    $('#table_editing').html(buttonContainer);
+
+    let closeButton = "<button type='button' id='close_selection_button'>Bearbeitung beenden</button>\n";
+    $('#close_switch_container').html(closeButton);
+
+    setupInserts();
+}
+
+function setupInserts() {
+
+    $('#start_end_time_button').click(function (event) {
+        insertStandardEvent(event, "Anfangs- und Endzeit eingeben");
+        startEndSubmit();
+    });
+    
+    $('#start_duration_button').click(function(event) {
+        insertStandardEvent(event, "Anfangszeit und Dauer eingeben");
+        startDurationSubmit();
+    });
+
+    $('#end_duration_button').click(function(event) {
+        isEnd = true;
+        insertStandardEvent(event, "Endzeit und Dauer eingeben");
+        endDurationSubmit();
+    });
+
+}
+
+function insertStandardEvent(event, title) {
+
+    event.preventDefault();
+
+    let selectionContent = "";
+
+    selectionContent += "<h3>" + title + "</h3>\n" +
+                        "<input type='text' name='entry_Text' id='entry_Text'>\n" +
+                        "<div class='table_entry_content'>\n";
+
+    switch (title) { 
+        case "Anfangs- und Endzeit eingeben":
+            selectionContent += includeStartTime();
+            selectionContent += includeStopTime();
+            selectionContent += includeProjectSelection();
+            break;
+        case "Anfangszeit und Dauer eingeben":
+            selectionContent += includeStartTime();
+            selectionContent += includeTimeframe();
+            selectionContent += includeProjectSelection();
+            break;
+        case "Endzeit und Dauer eingeben":
+            selectionContent += includeStopTime();
+            selectionContent += includeTimeframe();
+            selectionContent += includeProjectSelection();
+            break;
+        default: selectionContent += "";
+    }
+
+    selectionContent += "<div>\n" +
+                        "   <label for save_confirmation id='save_edit_label'>Speichern:</label>\n" +
+                        "   <input type='checkbox' id='save_confirmation' unchecked>\n" +
+                        "</div>\n" +
+                        "   <button type='button' class='input_button' id='confirm_switch'>Tabelle aktualisieren</button>\n" +
+                        "</div>";
+    $('#selection_container').html(selectionContent);
+
+}
+
+function startEndSubmit() {
+    
+    $('#confirm_switch').click(function (event) {
+        event.preventDefault();
+ 
+        let userName = $('#target_user').val();
+ 
+        let startTime = $('#edit_time_start').val();
+        let array = startTime.split(":");
+        let startMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+ 
+        let endTime = $('#edit_time_end').val();
+        array = endTime.split(":");
+        let endMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+ 
+        let hours = parseFloat((endMinutes-startMinutes)/60).toFixed(2);
+       
+        let row = "<tr>";
+        let tdEntries = ["", userName, $('#entry_Text').val(), dateStr, startTime, endTime, $('#project_selection').val(), hours];
+        for(let i=0; i< columnNames.length; i++) {
+            row += htmlSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
+        }
+        row += "</tr>"
+
+        $('#work_body').append(row);
+        openSaveFunction();
+    });   
+}
+
+function includeProjectSelection() {
+    let string= "<div>\n" +
+                "   <label for project_selection><b>Projekt:</b></label>\n" + 
+                "   <select id='project_selection'>\n" +
+                "       <option>Projekt1</option>\n" +
+                "       <option>Projekt2</option>\n" +
+                "       <option>Projekt3</option>\n" +
+                "       <option>Projekt4</option>\n" +
+                "       <option>Pause</option>\n" +
+                "   </select>\n" +
+                "</div>\n";
+    return string;
+}
+
+function includeStopTime() {
+    let string= "<div>\n" +
+                "   <label for edit_time_end>Endzeit letztes Projekt:</label>\n" +
+                "   <input type='time' name='Time_offset' value=" + switchTime + " id='edit_time_end'>\n" +
+                "</div>\n";
+    return string;
+}
+
+function includeStartTime() {
+    let string= "<div>\n" +
+                "   <label for edit_time_start>Anfangszeit nächstes Projekt:</label>\n" +
+                "   <input type='time' name='Time_offset' value=" + switchTime + " id='edit_time_start'>\n" +
+                "</div>\n";
+    return string;
+}
+
+function includeTimeframe() {
+
+    let string= "<div>\n" +
+                "   <label for time_frame>Zeitdauer:</label>\n" +
+                "   <input type='text' name='time_frame' value=" + 0 + " id='time_frame'>\n" +
+                "</div>\n";
+    return string;
+}
+
 function openSaveFunction() {
 
     let box = document.getElementById('save_confirmation');
@@ -224,7 +365,6 @@ function openSaveFunction() {
     if(box.checked) sendTable(); 
     
     $('#selection_container').empty();
-    showProjekts();
 }
 
 function sendTable(){
@@ -275,8 +415,8 @@ function removeIds() {
     }
 }
 
-function roundToQuarterHour(date) {
-    p = 15 * 60 * 1000; // milliseconds in a quarterhour
+function roundToMinute(date) {
+    p = 5 * 60 * 1000; // milliseconds in a quarterhour
     let quarter = new Date(Math.round(date.getTime() / p ) * p);
     return quarter.toLocaleTimeString();
 }
@@ -291,7 +431,7 @@ function rowDeletion() {
         rows[i].innerHTML += "<td><input type='checkbox' class='delete_input' id='delete_check" + i + "' unchecked></td>";
     }
 
-    $('#button_container').append("<button type='button' id='delete_confirm_button'>Ausgewählte Zeilen Löschen</button>");
+    $('#table_editing').append("<button type='button' id='delete_confirm_button'>Ausgewählte Zeilen Löschen</button>");
 
     $('#delete_confirm_button').click(function (event) {
        event.preventDefault();
