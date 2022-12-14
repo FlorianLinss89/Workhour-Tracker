@@ -1,23 +1,23 @@
 html {
-    background-color: rgb(167, 167, 167);;
+    background-color: rgb(22, 22, 22);
 }
 
 .header_container {
     display: grid;
     grid-template-columns: repeat(5, 3fr);
-    background-color: rgb(42, 0, 156);
+    background-color: rgb(22, 22, 22);
 }
 
 .header_symbol {
     grid-row: 1/1;
     grid-column: 1/1;
-    background-color: rgb(42, 0, 156);
+    background-color: rgb(22, 22, 22);
 }
 
 .header_text {
     grid-row: 1/1;
     grid-column: 2/auto;
-    background-color: rgb(42, 0, 156);
+    background-color: rgb(22, 22, 22);
     color: rgb(231, 161, 31);
     text-align: justify;
 }
@@ -25,12 +25,14 @@ html {
 .main_box {
     border: 0.2em solid;
     border-color: rgb(114, 8, 8);
-    background-color: rgb(167, 167, 167);
+    background-color: rgb(22, 22, 22);
+    color: #fff;
     padding: 0.5em;
 }
 
 .sub_headline {
-    background-color: rgb(167, 167, 167);
+    background-color: rgb(22, 22, 22);
+    color: #fff;
     text-align: left;
 }
 
@@ -56,9 +58,17 @@ html {
 }
 
 #button_container {
-    display: block;
+    display: flex;
     padding: 1%;
 }
+
+#selection_window {
+    padding: 1%;
+}
+
+.edit_table_button {
+    flex: 0 0 auto;
+} 
 
 .task_switch_container {
     display: block;
@@ -69,12 +79,31 @@ html {
     border-collapse: collapse;
 }
 
+th, caption {
+    color: #fff;
+}
+
+tr:nth-child(even) input{
+	background-color: aqua;
+	color: #000;
+}
+
+tr:nth-child(2n-1) input{
+	background-color: rgb(166, 255, 255);
+	color: #000;
+}
+
 .swap_month_button {
     margin-left: 20%;
 }
 
 .hidden_column {
     display: none;
+}
+
+.table_entry_content {
+    display: block;
+    padding: 0.5em;
 }
 
 footer {

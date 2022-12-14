@@ -372,12 +372,30 @@ function setupSelectionContainer() {
     $('#selection_header').html("");
     $('#selection_container').html("");
 
-    let buttonContainer =   "<button type='button' id='show_selection_button'>Tabelle bearbeiten</button>\n";
-    $('#button_container').html(buttonContainer);
+    setupEditButton();
+    setupInsertButton();
 
-    $('#show_selection_button').click(function(event) {
+}
+
+function setupEditButton() {
+
+    let tableEditing =   "<button type='button' id='edits_button'>Tabelle bearbeiten</button>\n";
+    $('#table_editing').html(tableEditing);
+
+    $('#edits_button').click(function(event) {
         event.preventDefault();
-        showSelectionButtons();
+        showEditButtons();
+    });
+}
+
+function setupInsertButton() {
+
+    let tableInsert =   "<button type='button' id='timeframes_button'>Zeintfenster einfügen</button>\n";
+    $('#insert_timeframe').html(tableInsert);
+
+    $('#timeframes_button').click(function(event) {
+        event.preventDefault();
+        showInsertButtons();
     });
 }
 
@@ -433,14 +451,16 @@ function fillSideBarTables(amount, check, data) {
                             "   <tbody id='work_body'>\n";
 
             for(let d of data){
-                if(check[i] == d['task_project']) {
-                    let row = d;
-                    let dateHelp = (row['task_date']).split("-");
-                    let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
-                    sideTable +="       <tr>\n";
-                    let tdEntries = [row['task_entry'], dateValue, row['task_start'], row['task_hours']];
-                    for(let k =0; k<projectColumns.length; k++) {
-                        sideTable += tableSetup(projectColumns[k]) + tdEntries[k] + "'></td>\n";
+                if(!(check[i] === "Pause")){
+                    if(check[i] == d['task_project']) {
+                        let row = d;
+                        let dateHelp = (row['task_date']).split("-");
+                        let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
+                        sideTable +="       <tr>\n";
+                        let tdEntries = [row['task_entry'], dateValue, row['task_start'], row['task_hours']];
+                        for(let k =0; k<projectColumns.length; k++) {
+                            sideTable += tableSetup(projectColumns[k]) + tdEntries[k] + "'></td>\n";
+                        }
                     }
                 }
             }
