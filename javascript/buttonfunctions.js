@@ -93,6 +93,16 @@ function setupEdits() {
         event.preventDefault();
         setupSelectionContainer();
     });
+
+    setUpCloseButton();
+}
+
+function setUpCloseButton() {
+
+    $('#close_selection_button').click(function(event) {
+        event.preventDefault();
+        setupSelectionContainer();
+    });
 }
 
 function listenerStandard(event, title) {
@@ -220,34 +230,23 @@ function endSubmit() {
 
 function showInsertButtons() {
 
-    let buttonContainer =   "<button type='button' class='edit_table_button' id='start_end_time_button'>Anfangs- und Endzeit eingeben</button>\n" +
-                            "<button type='button' class='edit_table_button' id='start_duration_button'>Anfangszeit und Dauer eingeben</button>\n" +
-                            "<button type='button' class='edit_table_button' id='end_duration_button'>Endzeit und Dauer eingeben</button>\n";
+    let buttonContainer =   "<button type='button' class='edit_table_button' id='time_button'>Anfangs- und Endzeit eingeben</button>\n";
     $('#table_editing').html(buttonContainer);
 
     let closeButton = "<button type='button' id='close_selection_button'>Bearbeitung beenden</button>\n";
     $('#close_switch_container').html(closeButton);
 
-    setupInserts();
+    setupInsert();
 }
 
-function setupInserts() {
+function setupInsert() {
 
     $('#start_end_time_button').click(function (event) {
         insertStandardEvent(event, "Anfangs- und Endzeit eingeben");
         startEndSubmit();
     });
     
-    $('#start_duration_button').click(function(event) {
-        insertStandardEvent(event, "Anfangszeit und Dauer eingeben");
-        startDurationSubmit();
-    });
-
-    $('#end_duration_button').click(function(event) {
-        isEnd = true;
-        insertStandardEvent(event, "Endzeit und Dauer eingeben");
-        endDurationSubmit();
-    });
+    setUpCloseButton();
 
 }
 
@@ -263,18 +262,7 @@ function insertStandardEvent(event, title) {
 
     switch (title) { 
         case "Anfangs- und Endzeit eingeben":
-            selectionContent += includeStartTime();
-            selectionContent += includeStopTime();
-            selectionContent += includeProjectSelection();
-            break;
-        case "Anfangszeit und Dauer eingeben":
-            selectionContent += includeStartTime();
-            selectionContent += includeTimeframe();
-            selectionContent += includeProjectSelection();
-            break;
-        case "Endzeit und Dauer eingeben":
-            selectionContent += includeStopTime();
-            selectionContent += includeTimeframe();
+            selectionContent += includeTimeEntry();
             selectionContent += includeProjectSelection();
             break;
         default: selectionContent += "";
@@ -288,35 +276,6 @@ function insertStandardEvent(event, title) {
                         "</div>";
     $('#selection_container').html(selectionContent);
 
-}
-
-function startEndSubmit() {
-    
-    $('#confirm_switch').click(function (event) {
-        event.preventDefault();
- 
-        let userName = $('#target_user').val();
- 
-        let startTime = $('#edit_time_start').val();
-        let array = startTime.split(":");
-        let startMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
- 
-        let endTime = $('#edit_time_end').val();
-        array = endTime.split(":");
-        let endMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
- 
-        let hours = parseFloat((endMinutes-startMinutes)/60).toFixed(2);
-       
-        let row = "<tr>";
-        let tdEntries = ["", userName, $('#entry_Text').val(), dateStr, startTime, endTime, $('#project_selection').val(), hours];
-        for(let i=0; i< columnNames.length; i++) {
-            row += htmlSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
-        }
-        row += "</tr>"
-
-        $('#work_body').append(row);
-        openSaveFunction();
-    });   
 }
 
 function includeProjectSelection() {
@@ -335,7 +294,7 @@ function includeProjectSelection() {
 
 function includeStopTime() {
     let string= "<div>\n" +
-                "   <label for edit_time_end>Endzeit letztes Projekt:</label>\n" +
+                "   <label for edit_time_end><b>Endzeit letztes Projekt:</b></label>\n" +
                 "   <input type='time' name='Time_offset' value=" + switchTime + " id='edit_time_end'>\n" +
                 "</div>\n";
     return string;
@@ -343,17 +302,16 @@ function includeStopTime() {
 
 function includeStartTime() {
     let string= "<div>\n" +
-                "   <label for edit_time_start>Anfangszeit nächstes Projekt:</label>\n" +
+                "   <label for edit_time_start><b>Anfangszeit nächstes Projekt:</b></label>\n" +
                 "   <input type='time' name='Time_offset' value=" + switchTime + " id='edit_time_start'>\n" +
                 "</div>\n";
     return string;
 }
 
-function includeTimeframe() {
-
+function includeTimeEntry() {
     let string= "<div>\n" +
-                "   <label for time_frame>Zeitdauer:</label>\n" +
-                "   <input type='text' name='time_frame' value=" + 0 + " id='time_frame'>\n" +
+                "   <label for edit_time_start><b>Zeitangabe:</b></label>\n" +
+                "   <input type='text' name='Time_offset' value=" + switchTime + " id='edit_time_start'>\n" +
                 "</div>\n";
     return string;
 }
@@ -571,4 +529,102 @@ function showNextDate(displayString) {
 
         setDayDisplay(dayHelp);   
     }
+}
+
+function timeSubmit() {
+    
+    $('#confirm_switch').click(function (event) {
+        event.preventDefault();
+ 
+        let userName = $('#target_user').val();
+ 
+        let timeString = $('#time_input').val();
+        let timeArray = timeString.split(" ");
+        let startTime = switchTime;
+        let endTime = switchTime;
+        let timeHelp = [];
+        let duration = 0;
+        
+        if(timeArray.includes(":")) {
+            timeHelp = timeArray.filter((a) => a.includes(":"));
+            if(timeHelp.length > 1) {
+                endTime = timeHelp[1];
+            }
+            startTime = timeHelp[0];
+        }
+
+        if(timeHelp.length < 2) {
+
+            duration = timeParser(timeArray);
+
+            if(timeArray.includes("-")) {
+                
+                endTime = startTime;
+                let array = endTime.split(":");
+                let startHelp = [parseInt(array[0]), (parseInt(array[1]) - parseInt(duration))];
+                while(startHelp[1]<0) {
+                    startHelp[0] = parseInt(startHelp[0]) - 1;
+                    startHelp[1] = parseInt(startHelp[1]) + 60;
+                }
+                startTime = startHelp[0] + ":" + startHelp[1];
+            }
+            
+            else {
+                let array = startTime.split(":");
+                let endHelp = [parseInt(array[0]), (parseInt(array[1]) + parseInt(duration))];
+                while(endHelp[1]<0) {
+                    endHelp[0] = parseInt(endHelp[0]) - 1;
+                    endHelp[1] = parseInt(endHelp[1]) + 60;
+                }
+                endTime = endHelp[0] + ":" + endHelp[1];
+            }
+        }
+
+        else {
+
+            let array = startTime.split(":");
+            let startMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+     
+            array = endTime.split(":");
+            let endMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+     
+            duration = parseInt(endMinutes-startMinutes);
+        }
+
+        let hours = parseFloat(duration/60).toFixed(2);
+       
+        let row = "<tr>";
+        let tdEntries = ["", userName, $('#entry_Text').val(), dateStr, startTime, endTime, $('#project_selection').val(), hours];
+        for(let i=0; i< columnNames.length; i++) {
+            row += htmlSetup(columnNames[i]) + tdEntries[i] + "'></td>\n";
+        }
+        row += "</tr>"
+
+        $('#work_body').append(row);
+        openSaveFunction();
+    });   
+}
+
+function timeParser(timeArray) {
+
+    let hours = 0;
+    let minutes = 0;
+
+    if(timeArray.includes("h")) {
+
+        let index = 0;
+        index = (timeArray.findIndex(function(item){
+            return item.indexOf("h") !== -1;
+        }));
+        hours = timeArray[index];
+
+        if(timeArray.includes("m")) {
+
+            index = (timeArray.findIndex(function(item){
+                return item.indexOf("m") !== -1;
+            }));
+            minutes = timeArray[index];
+        }
+    }
+    return (parseInt(hours)*60) + parseInt(minutes);
 }

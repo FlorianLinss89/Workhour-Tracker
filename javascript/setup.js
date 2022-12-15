@@ -156,7 +156,7 @@ function weekData(dateCheck) {
             dateHelp = new Date(dateCheck[2], dateCheck[1], 0); // create new Date to get the number of days of the current month
         }
 
-        else if(i == 6) { // inlude next Monday
+        else if(i == 6) { // include next Monday
 
             endCheck = dateHelp.getDate() - dateCheck[0];
             if(endCheck <3) { // checking for end of Month
