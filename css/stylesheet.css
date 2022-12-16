@@ -74,13 +74,30 @@ html {
     display: block;
 }
 
+.main_table tbody {
+    display: block;
+    height: 40em;
+    overflow-y: auto;
+}
+
 .main_table, td {
     border: 0.1em solid black;
     border-collapse: collapse;
 }
 
+.project_table tbody{
+    display: block;
+    height: 20em;
+    overflow-y: auto;
+}
+
 th, caption {
     color: #fff;
+}
+
+thead {
+    width: 100%;
+    display: table;
 }
 
 tr:nth-child(even) input{

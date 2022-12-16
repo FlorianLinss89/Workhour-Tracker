@@ -401,11 +401,19 @@ function fillSideBar() {
     let check = [];
 
     try {
-        check[0] = userData[0]['task_project'];
+        let fs = 0;
+        while(userData[fs]['task_project'] === "Pause") {
+            fs++;
+        }
+        check[0] = userData[fs]['task_project'];
+        
         for(let i of userData) {
-            if(!(check.indexOf(i['task_project'])>-1)) {
-                check.push(i['task_project']);
-                projectAmount++;
+            if(!(i['task_project'] === "Pause")) {
+
+                if(!(check.indexOf(i['task_project'])>-1)) {
+                    check.push(i['task_project']);
+                    projectAmount++;
+                }
             }
         }
 
@@ -440,16 +448,14 @@ function fillSideBarTables(amount, check, data) {
                             "   <tbody id='work_body'>\n";
 
             for(let d of data){
-                if(!(check[i] === "Pause")){
-                    if(check[i] == d['task_project']) {
-                        let row = d;
-                        let dateHelp = (row['task_date']).split("-");
-                        let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
-                        sideTable +="       <tr>\n";
-                        let tdEntries = [row['task_entry'], dateValue, row['task_start'], row['task_hours']];
-                        for(let k =0; k<projectColumns.length; k++) {
-                            sideTable += tableSetup(projectColumns[k]) + tdEntries[k] + "'></td>\n";
-                        }
+                if(check[i] == d['task_project']) {
+                    let row = d;
+                    let dateHelp = (row['task_date']).split("-");
+                    let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
+                    sideTable +="       <tr>\n";
+                    let tdEntries = [row['task_entry'], dateValue, row['task_start'], row['task_hours']];
+                    for(let k =0; k<projectColumns.length; k++) {
+                        sideTable += tableSetup(projectColumns[k]) + tdEntries[k] + "'></td>\n";
                     }
                 }
             }
