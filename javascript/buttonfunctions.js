@@ -89,11 +89,6 @@ function setupEdits() {
         rowDeletion();
     });
 
-    $('#close_selection_button').click(function(event) {
-        event.preventDefault();
-        setupSelectionContainer();
-    });
-
     setUpCloseButton();
 }
 
@@ -228,10 +223,10 @@ function endSubmit() {
     });   
 }
 
-function showInsertButtons() {
+function setupInsertButton() {
 
-    let buttonContainer =   "<button type='button' class='edit_table_button' id='time_button'>Anfangs- und Endzeit eingeben</button>\n";
-    $('#table_editing').html(buttonContainer);
+    let buttonContainer =   "<button type='button' class='edit_table_button' id='time_button'>Event einfügen</button>\n";
+    $('#insert_timeframe').html(buttonContainer);
 
     let closeButton = "<button type='button' id='close_selection_button'>Bearbeitung beenden</button>\n";
     $('#close_switch_container').html(closeButton);
@@ -241,40 +236,31 @@ function showInsertButtons() {
 
 function setupInsert() {
 
-    $('#start_end_time_button').click(function (event) {
-        insertStandardEvent(event, "Anfangs- und Endzeit eingeben");
-        startEndSubmit();
+    $('#time_button').click(function (event) {
+        
+        event.preventDefault();
+    
+        let selectionContent = "<h3>Event eintragen</h3>\n" +
+                            "<label for entry_Text id='save_edit_label'><b>Tätigkeit:</b></label>\n" +
+                            "<input type='text' name='entry_Text' id='entry_Text'>\n" +
+                            "<div class='table_entry_content'>\n";
+    
+                            selectionContent += includeTimeEntry();
+                            selectionContent += includeProjectSelection();
+    
+        selectionContent += "<div>\n" +
+                            "   <label for save_confirmation id='save_edit_label'><b>Speichern:</b></label>\n" +
+                            "   <input type='checkbox' id='save_confirmation' unchecked>\n" +
+                            "</div>\n" +
+                            "   <button type='button' class='input_button' id='confirm_switch'>Tabelle aktualisieren</button>\n" +
+                            "</div>";
+        $('#selection_container').html(selectionContent);
+
+        timeSubmit();
     });
     
     setUpCloseButton();
-
-}
-
-function insertStandardEvent(event, title) {
-
-    event.preventDefault();
-
-    let selectionContent = "";
-
-    selectionContent += "<h3>" + title + "</h3>\n" +
-                        "<input type='text' name='entry_Text' id='entry_Text'>\n" +
-                        "<div class='table_entry_content'>\n";
-
-    switch (title) { 
-        case "Anfangs- und Endzeit eingeben":
-            selectionContent += includeTimeEntry();
-            selectionContent += includeProjectSelection();
-            break;
-        default: selectionContent += "";
-    }
-
-    selectionContent += "<div>\n" +
-                        "   <label for save_confirmation id='save_edit_label'>Speichern:</label>\n" +
-                        "   <input type='checkbox' id='save_confirmation' unchecked>\n" +
-                        "</div>\n" +
-                        "   <button type='button' class='input_button' id='confirm_switch'>Tabelle aktualisieren</button>\n" +
-                        "</div>";
-    $('#selection_container').html(selectionContent);
+    setupEditButton();
 
 }
 
@@ -311,7 +297,7 @@ function includeStartTime() {
 function includeTimeEntry() {
     let string= "<div>\n" +
                 "   <label for edit_time_start><b>Zeitangabe:</b></label>\n" +
-                "   <input type='text' name='Time_offset' value=" + switchTime + " id='edit_time_start'>\n" +
+                "   <input type='text' name='time_input' value=" + switchTime + " id='time_input'>\n" +
                 "</div>\n";
     return string;
 }
@@ -545,7 +531,8 @@ function timeSubmit() {
         let timeHelp = [];
         let duration = 0;
         
-        if(timeArray.includes(":")) {
+        let index = timeArray.findIndex(t => t.includes("-"));
+        if(index>-1) {
             timeHelp = timeArray.filter((a) => a.includes(":"));
             if(timeHelp.length > 1) {
                 endTime = timeHelp[1];
@@ -557,7 +544,8 @@ function timeSubmit() {
 
             duration = timeParser(timeArray);
 
-            if(timeArray.includes("-")) {
+            index = timeArray.findIndex(t => t.includes("-"));
+            if(index>-1) {
                 
                 endTime = startTime;
                 let array = endTime.split(":");
@@ -610,21 +598,11 @@ function timeParser(timeArray) {
     let hours = 0;
     let minutes = 0;
 
-    if(timeArray.includes("h")) {
+    let index = timeArray.findIndex(t => t.includes("h"));
+    if(index>-1) hours = timeArray[index];
 
-        let index = 0;
-        index = (timeArray.findIndex(function(item){
-            return item.indexOf("h") !== -1;
-        }));
-        hours = timeArray[index];
+    index = timeArray.findIndex(t => t.includes("m"));
+    if (index>-1) minutes = timeArray[index];
 
-        if(timeArray.includes("m")) {
-
-            index = (timeArray.findIndex(function(item){
-                return item.indexOf("m") !== -1;
-            }));
-            minutes = timeArray[index];
-        }
-    }
-    return (parseInt(hours)*60) + parseInt(minutes);
+    return (Math.abs(parseInt(hours))*60) + Math.abs(parseInt(minutes));
 }

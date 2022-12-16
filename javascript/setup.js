@@ -388,17 +388,6 @@ function setupEditButton() {
     });
 }
 
-function setupInsertButton() {
-
-    let tableInsert =   "<button type='button' id='timeframes_button'>Zeintfenster einfügen</button>\n";
-    $('#insert_timeframe').html(tableInsert);
-
-    $('#timeframes_button').click(function(event) {
-        event.preventDefault();
-        showInsertButtons();
-    });
-}
-
 function fillFoot() {
     let linkData;
     linkData = "<a href=http://localhost/trackertest/index.html>Login</a>"
