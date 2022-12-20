@@ -81,7 +81,18 @@ function structureSite(displayString) {
             let row = insert[r];
             let dateHelp = (row['task_date']).split("-");
             let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
-            let tdEntries = [row['task_index'], row['task_user'], row['task_entry'], dateValue, row['task_start'], row['task_end'], row['task_project'], row['task_hours']];
+
+            let startData = (row['task_start']).split(":");
+            let endData = (row['task_end']).split(":");
+            let startEntry = startData[0] + ":" + startData[1];
+            let endEntry = endData[0] + ":" + endData[1];
+
+            if(endData.length<2) endEntry = 0;
+
+            let duration = durationCalculator(startEntry, endEntry);
+            let hours = parseFloat(duration/60).toFixed(2);
+
+            let tdEntries = [row['task_index'], row['task_user'], row['task_entry'], dateValue, startEntry, endEntry, row['task_project'], hours];
             
             workhoursTable +=   "    <tr>\n";
             if(r == insert.length-1){

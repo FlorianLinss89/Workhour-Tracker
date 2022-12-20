@@ -569,14 +569,7 @@ function timeSubmit() {
         }
 
         else {
-
-            let array = startTime.split(":");
-            let startMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
-     
-            array = endTime.split(":");
-            let endMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
-     
-            duration = parseInt(endMinutes-startMinutes);
+            duration = durationCalculator(startTime, endTime);
         }
 
         let hours = parseFloat(duration/60).toFixed(2);
@@ -605,4 +598,19 @@ function timeParser(timeArray) {
     if (index>-1) minutes = timeArray[index];
 
     return (Math.abs(parseInt(hours))*60) + Math.abs(parseInt(minutes));
+}
+
+function durationCalculator(startTime, endTime) {
+
+    if(startTime.toString().includes(":") && endTime.toString().includes(":")) {
+
+        let array = startTime.split(":");
+        let startMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+    
+        array = endTime.split(":");
+        let endMinutes = (parseFloat(array[0])*60)+(parseFloat(array[1]));
+    
+        return parseInt(endMinutes-startMinutes);
+    }
+    else return 0;
 }
