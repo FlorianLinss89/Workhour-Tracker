@@ -115,6 +115,9 @@ function structureSite(displayString) {
 
     $('#main_content').html(workhoursTable);
 
+    let displayBody = document.querySelector('#work_body');
+    displayBody.scrollTop = displayBody.scrollHeight - displayBody.clientHeight;
+
     function firstRow(entry) {
         let help = entry;
         workhoursTable +=   "    <tr id='setup_row'>\n";
@@ -463,8 +466,11 @@ function fillSideBarTables(amount, check, data) {
                     let row = d;
                     let dateHelp = (row['task_date']).split("-");
                     let dateValue = dateHelp[2] + "." + dateHelp[1] + "." + dateHelp[0];
+                    let startData = (row['task_start']).split(":");
+                    let startEntry = startData[0] + ":" + startData[1];
+
                     sideTable +="       <tr>\n";
-                    let tdEntries = [row['task_entry'], dateValue, row['task_start'], row['task_hours']];
+                    let tdEntries = [row['task_entry'], dateValue, startEntry, row['task_hours']];
                     for(let k =0; k<projectColumns.length; k++) {
                         sideTable += tableSetup(projectColumns[k]) + tdEntries[k] + "'></td>\n";
                     }
@@ -473,6 +479,7 @@ function fillSideBarTables(amount, check, data) {
 
             sideTable +=    "</tbody>" +
                             "</table>";
+                            
             bottomDisplay += sideTable;
             bottomDisplay += "</div>";
         }
@@ -492,6 +499,7 @@ function tableSetup(caseStr) {
     let posClass = "";
     let elementClass = "";
     let size = "size='11'";
+    let indexID = "";
     if(caseStr === 'entry') {
         posClass = "class='entry_class' ";
         size = "size='20'";

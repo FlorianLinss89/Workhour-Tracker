@@ -86,7 +86,7 @@ function setupEdits() {
 
     $('#delete_row_button').click(function(event) {
         event.preventDefault();
-        rowDeletion();
+        rowDeletionSetup();
     });
 
     setUpCloseButton();
@@ -97,6 +97,7 @@ function setUpCloseButton() {
     $('#close_selection_button').click(function(event) {
         event.preventDefault();
         setupSelectionContainer();
+        deleteReset();
     });
 }
 
@@ -365,11 +366,10 @@ function roundToMinute(date) {
     return quarter.toLocaleTimeString();
 }
 
-function rowDeletion() {
+function rowDeletionSetup() {
     
     $('#main_head').find('tr').append( "<th id='delete_head' name='delete'>Löschen</th>");
     
-    let rowsToRemove = [];
     let rows = document.getElementById('work_body').getElementsByTagName('tr');
     for (let i=0; i<rows.length; i++) {
         rows[i].innerHTML += "<td><input type='checkbox' class='delete_input' id='delete_check" + i + "' unchecked></td>";
@@ -379,17 +379,57 @@ function rowDeletion() {
 
     $('#delete_confirm_button').click(function (event) {
        event.preventDefault();
+       rowDeletion();
 
-       $('.delete_input').filter(function(){
-        let r = $(this).siblings('.index_class').val();
-        rowsToRemove.push(r);
-        return $(this).prop('checked');
-       }).parentsUntil('tbody').remove();
 
-       $('.delete_input').parent().remove();
-       $('#delete_head').remove();
-       $('#delete_confirm_button').remove();
     }); 
+}
+
+function rowDeletion() {
+
+    let checkID = "";
+    let rows = document.getElementById('work_body').getElementsByTagName('tr');
+    let index= [];
+
+    for (let i=0; i<rows.length; i++) {
+        if($('#delete_check'+i).prop('checked'))
+        index.push(rows[i].firstElementChild.innerHTML);
+    }
+
+    let saveForm =  "<form method='post' name= 'delete_form' action='delete.php' id='table_form'>\n";
+    for(let i of index){
+        saveForm += i;
+    }
+    saveForm +="</form>";
+    console.log(saveForm);
+    $('#save_form').html(saveForm);
+
+    let data = new FormData(document.getElementById('table_form'));
+
+    let request = new XMLHttpRequest();
+    request.addEventListener('load', function(event) {
+        if (request.status >= 200 && request.status < 300) {
+            console.log(request.responseText);
+        } 
+        else console.log(request.responseText);
+    });
+    request.open("POST","../php/delete.php");
+    request.send(data);
+    $('#save_form').empty();
+    $('#delete_table').empty();
+
+    $('.delete_input').filter(function(){
+        return $(this).prop('checked');
+    }).parentsUntil('tbody').remove();
+
+    deleteReset();
+}
+
+function deleteReset() {
+
+    $('.delete_input').parent().remove();
+    $('#delete_head').remove();
+    $('#delete_confirm_button').remove();
 }
 
 function showPreviousDate(displayString) {

@@ -1,7 +1,6 @@
 <?php
 include("connect.php");
 $tableName= 'main_table';
-$column= 'task_index';
 
 if(isset($_POST['date'])) {
 
