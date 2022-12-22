@@ -16,7 +16,7 @@ function check (data){
          failure(request.responseText);
       }
    });
-   request.open("POST","../php/userlogin.php");
+   request.open("POST","php/userlogin.php");
    request.send(data);
 
    function success() {
